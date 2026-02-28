@@ -2,8 +2,12 @@ from datetime import date
 
 from constraints import *
 from sqlalchemy import CheckConstraint
-from extensions import db
+from extensions import db, bcrypt, login_manager
+from flask_login import UserMixin
 
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(User, user_id)
 
 class Role(db.Model):
     __tablename__ = "roles"
@@ -12,19 +16,25 @@ class Role(db.Model):
     name = db.Column(db.String(MAX_ROLE_LENGTH), unique=True)
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
     role = db.relationship('Role')
 
-    username = db.Column(db.String(MAX_USERNAME_LENGTH), unique=True, nullable=False)
-    email = db.Column(db.String(MAX_EMAIL_LENGTH), unique=True, nullable=False)
-    password = db.Column(db.String(PASSWORD_HASH_LENGTH), nullable=False)
+    username = db.Column(db.String(MAX_USERNAME_LENGTH), unique=True, nullable=False, index=True)
+    email = db.Column(db.String(MAX_EMAIL_LENGTH), unique=True, nullable=False, index=True)
+    hashed_password = db.Column(db.String(PASSWORD_HASH_LENGTH), nullable=False)
+
     student = db.relationship('Student', back_populates='user', uselist=False, cascade='all, delete-orphan')
     company = db.relationship('Company', back_populates='user', uselist=False, cascade='all, delete-orphan')
 
+    def set_password(self, raw_password):
+        self.hashed_password = bcrypt.generate_password_hash(raw_password).decode('utf-8')
+
+    def check_password(self, raw_password):
+        return bcrypt.check_password_hash(self.hashed_password, raw_password)
 
 class Student(db.Model):
     __tablename__ = "students"

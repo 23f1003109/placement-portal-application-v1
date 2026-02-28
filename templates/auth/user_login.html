@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block head_content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_and_signup.css') }}">
+{% endblock %}
+
+{% block main_content %}
+    <form method="POST" class="form">
+        {{ form.hidden_tag() }}
+        <div class="form__field">
+            {{ form.username.label(class="form__field-label") }} {{ form.username(class="form__field-input", required=True) }}
+            {% for error in form.username.errors %}
+                <div class="form__field-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="form__field">
+            {{ form.password.label(class="form__field-label") }} {{ form.password(class="form__field-input", required=True) }}
+            {% for error in form.password.errors %}
+                <div class="form__field-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {{ form.submit(class="form__submit") }}
+    </form>
+{% endblock %}
+
