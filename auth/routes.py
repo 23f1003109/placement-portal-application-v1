@@ -3,7 +3,7 @@ from models import User, Role
 from extensions import db
 from flask_login import login_user, current_user, login_required, logout_user
 
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, ResetPasswordForm, ChangePasswordForm
 from . import auth_bp
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -52,3 +52,33 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+@auth_bp.route('/reset_password', methods=['GET', 'POST'])
+def reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('auth.change_password'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user = form.user
+        new_password = form.new_password.data
+        user.set_password(new_password)
+        db.session.commit()
+        login_user(user, remember=True)
+        return redirect(url_for(f"{user.role.name}.index"))
+    return render_template('auth/reset.html', form=form)
+
+
+
+@auth_bp.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if not current_user.check_password(form.current_password.data):
+            form.current_password.errors.append('Incorrect current password.')
+        else:
+            current_user.set_password(form.new_password.data)
+            db.session.commit()
+            flash("Password updated successfully.", "success")
+            return redirect(url_for(f'{current_user.role.name}.index'))
+    return render_template('auth/change_password.html', form=form)

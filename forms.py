@@ -34,6 +34,21 @@ class ResetPasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), Length(max=MAX_RAW_PASSWORD_LENGTH), EqualTo('new_password', message='Passwords must match!')])
     submit = SubmitField('Reset Password')
 
+    def validate(self, extra_validators=None):
+        if not super().validate(extra_validators):
+            return False
+
+        email = self.email.data
+        username = self.username.data
+        user = User.query.filter_by(email=email, username=username).first()
+
+        if not user:
+            self.username.errors.append("Invalid username or email combination.")
+            return False
+
+        self.user = user
+        return True
+
 class ChangePasswordForm(FlaskForm):
     current_password = PasswordField('Current Password', validators=[DataRequired(), Length(max=MAX_RAW_PASSWORD_LENGTH)])
     new_password = PasswordField('New Password', validators=[DataRequired(), Length(max=MAX_RAW_PASSWORD_LENGTH)])
