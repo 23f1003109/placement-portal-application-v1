@@ -1,58 +1,39 @@
 {% set state = "blue" %}
 
 {% if not current_user.is_authenticated %}
-{% set state = "red" %}
+    {% set state = "red" %}
 {% endif %}
 
-{% with messages = get_flashed_messages(category_filter=["success"]) %}
-{% if "login_success" in messages %}
-{% set state = "green-flash" %}
-{% endif %}
-{% endwith %}
-
-<svg height="200px"
-     width="200px"
-     viewBox="0 0 512 512"
-     xmlns="http://www.w3.org/2000/svg">
-
+<svg viewBox="0 0 512 512"
+     xmlns="http://www.w3.org/2000/svg"
+	 class="navbar__brand-logo"
+	 >
     <defs>
 
-        {% if state == "red" %}
-
-        <!-- Static Red Gradient -->
-        <radialGradient id="logo-gradient">
+        <!-- RED GRADIENT -->
+        <radialGradient id="red-gradient">
             <stop offset="0%" stop-color="#ff8a8a"/>
             <stop offset="100%" stop-color="#b00020"/>
         </radialGradient>
 
-        {% else %}
-
-        <!-- Blue Base Gradient -->
-        <radialGradient id="logo-gradient">
-            <stop offset="0%" stop-color="#6fb1ff">
-                {% if state == "green-flash" %}
-                <animate attributeName="stop-color"
-                         values="#8aff8a;#6fb1ff"
-                         dur="1s"
-                         fill="freeze"/>
-                {% endif %}
-            </stop>
-
-            <stop offset="100%" stop-color="#004aad">
-                {% if state == "green-flash" %}
-                <animate attributeName="stop-color"
-                         values="#0b8f3d;#004aad"
-                         dur="1s"
-                         fill="freeze"/>
-                {% endif %}
-            </stop>
+        <!-- BLUE GRADIENT -->
+        <radialGradient id="blue-gradient">
+            <stop offset="0%" stop-color="#6fb1ff"/>
+            <stop offset="100%" stop-color="#004aad"/>
         </radialGradient>
 
-        {% endif %}
+        <!-- GREEN SWEEP (only on login success) -->
+        <radialGradient id="green-gradient">
+			<stop offset="0%" stop-color="#8aff8a"/>
+			<stop offset="100%" stop-color="#0b8f3d"/>
+    	</radialGradient>
+
 
     </defs>
 
-    <g fill="url(#logo-gradient)">
+    <!-- BASE LAYER -->
+    <g class="logo-fill" fill="url(#{{ 'red-gradient' if state == 'red' else 'blue-gradient' }})">
+
         <path d="M411.779,192.47c-4.166,1.472-6.35,6.043-4.877,10.208C412.939,219.763,416,237.703,416,256c0,88.225-71.776,160-160,160
 		S96,344.225,96,256S167.776,96,256,96c37.952,0,74.749,13.522,103.612,38.076c3.365,2.861,8.414,2.455,11.277-0.91
 		s2.456-8.414-0.91-11.277C338.226,94.876,297.747,80,256,80c-97.047,0-176,78.953-176,176s78.953,176,176,176s176-78.953,176-176
@@ -125,4 +106,5 @@
 		c-0.077,0.127-0.156,0.254-0.226,0.387c-0.042,0.079-0.078,0.163-0.117,0.244c-0.052,0.105-0.106,0.209-0.153,0.318
 		c-0.553-3.774-0.901-7.241-0.901-9.988C208.369,170.144,212.46,160,223.992,160z"/>
     </g>
+
 </svg>

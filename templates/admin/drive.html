@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% from "macros/model_view.jinja2" import render_fields %}
+
+{% block head_content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/miniature_page.css') }}">
+{% endblock %}
+
+{% block main_content %}
+<main>
+    <h1 class="view_details-header">Drive Details</h1>
+    <div class="view_details">
+        <ul class="view_details-items">
+            {{ render_fields(drive, ['salary']) }}
+            <li class="view_details-item">
+                <span class="subentry">Company:</span>
+                <span class="subentry">{{ drive.company.name }}</span>
+            </li>
+            <li class="view_details-item">Salary: {{ drive.salary }}</li>
+            <li class="view_details-item">Location: {{ drive.company.location }}</li>
+        </ul>
+        <img src="{{ url_for('static', filename='images/company-svgrepo-com.svg') }}" alt="Stock Company Image" class="view_details-image">
+    </div>
+    <div class="view_details-buttons">
+        <a href="{{ url_for('admin.index') }}" class="view_details-button item__button-blue">Back</a>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% macro render_fields(model_instance, skip_fields=[]) %}
+
+{% for key, value in model_instance.exposed_fields().items()  if key not in skip_fields %}
+
+{% set field_value = model_instance[key] %}
+
+<li class="view_details-item">
+    <span class="item_title subentry">{{ value }}:</span>
+    <span class="item_value subentry">{{ field_value if field_value is not none else 'N/A' }}</span>
+</li>
+
+{% endfor %}
+
+{% endmacro %}

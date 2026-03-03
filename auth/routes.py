@@ -18,7 +18,6 @@ def login():
         if user and user.check_password(password):
             role_name = user.role.name
             login_user(user, remember=True)
-            flash("login_success", "success")
             return redirect(url_for(f'{role_name}.index'))
         flash('Invalid username or password', 'danger')
     return render_template('auth/user_login.html', form=form)
@@ -42,7 +41,6 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user, remember=True)
-        flash("login_success", "success")
         return redirect(url_for(f'{new_user.role.name}.index'))
 
     return render_template('auth/user_signup.html', form=form)

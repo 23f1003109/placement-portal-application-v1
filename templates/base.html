@@ -5,48 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title or 'iPlaced!' }}</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
     {% block head_content %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" >
     {% endblock %}
 </head>
 <body>
-    <header class="navbar">
-        <div class="navbar__brand">
-            <div class="navbar__brand-logo">
-                {% include "logo.html" %}
+    <div class="container">
+        <header class="navbar">
+            <div class="navbar__brand">
+                {% if current_user.is_authenticated %}
+                    <a class="navbar__brand-logo_container navbar-link" href="{{ url_for(current_user.role.name ~ '.index') }}">
+                        {% include "logo.html" %}
+                    </a>
+                    <a class="navbar__brand-name navbar-link" href="{{ url_for(current_user.role.name ~ '.index') }}">
+                        iPlaced!
+                    </a>
+                {% else %}
+                    <a class="navbar__brand-logo_container navbar-link" href="{{ url_for('auth.login') }}">
+                        {% include "logo.html" %}
+                    </a>
+                    <a class="navbar__brand-name navbar-link" href="{{ url_for('auth.login') }}">
+                        iPlaced!
+                    </a>
+                {% endif %}
             </div>
-            <div class="navbar__brand-name">
-                iPlaced!
-            </div>
-        </div>
-        <nav class="navbar__nav">
-            {% if current_user.is_authenticated and nav_items is defined and nav_items %}
-                <ul class="navbar__nav-items">
-                    {% for item in nav_items %}
-                    <li class="navbar__nav-item">
-                        <a href="{{ item.url }}" class="navbar__nav-link">
-                            {{ item.label }}
-                        </a>
-                    </li>
+            <nav class="navbar__nav">
+                {% if current_user.is_authenticated and nav_items is defined and nav_items %}
+                    <ul class="navbar__nav-items">
+                        {% for item in nav_items %}
+                        <li class="navbar__nav-item">
+                            <a href="{{ item.url }}" class="navbar__nav-link">
+                                {{ item.label }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </nav>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash flash--{{ category }}">
+                            {{ message }}
+                        </div>
                     {% endfor %}
-                </ul>
+                </div>
             {% endif %}
-        </nav>
-    </header>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-container">
-                {% for category, message in messages %}
-                    <div class="flash flash--{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-    {% block main_content %}
-    {% endblock %}
-
+        {% endwith %}
+        {% block main_content %}
+        {% endblock %}
+    </div>
 </body>
 </html>

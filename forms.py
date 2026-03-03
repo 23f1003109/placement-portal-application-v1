@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, EmailField, RadioField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms import StringField, PasswordField, SubmitField, EmailField, SelectField, TextAreaField, RadioField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp, Optional, URL
 from wtforms import ValidationError
 from constraints import *
 from models import User
@@ -56,13 +56,32 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField('Change Password')
 
 class UpdateStudentProfileForm(FlaskForm):
-    pass
+    name = StringField('Name', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    department = StringField('Department', validators=[DataRequired(), Length(max=MAX_DEPARTMENT_NAME_LENGTH)])
+    degree = StringField('Degree', validators=[DataRequired(), Length(max=MAX_DEGREE_NAME_LENGTH)])
+    contact_number = StringField('Phone Number', validators=[DataRequired(), Length(max=MAX_CONTACT_NUMBER_LENGTH), Regexp(r'^\+?\d{10,15}$', message="Invalid format for a phone number.")])
+
 
 class UpdateCompanyProfileForm(FlaskForm):
-    pass
+    name = StringField('Name', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    industry = StringField('Industry', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    hr_name = StringField('HR Name', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    hr_email = EmailField('Email', validators=[DataRequired(), Length(max=MAX_EMAIL_LENGTH), Email()])
+    hr_contact = StringField('Phone Number', validators=[DataRequired(), Length(max=MAX_CONTACT_NUMBER_LENGTH), Regexp(r'^\+?\d{10,15}$', message="Invalid format for a phone number.")])
+    description = TextAreaField('Description')
+    location = TextAreaField('Location')
+    website = TextAreaField('Website', validators=[Optional(),URL(message='Not a valid domain! You may leave this field empty.')])
 
 class CreateDriveForm(FlaskForm):
     pass
 
 class CreateApplicationForm(FlaskForm):
+    pass
+
+class FilterForm(FlaskForm):
+    filter_by = SelectField('Filter By', validators=[DataRequired()], default='name')
+    filter_query = StringField('Query')
+    submit = SubmitField('Filter')
+
+class HideCSRFTokenForm(FlaskForm):
     pass

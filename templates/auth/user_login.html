@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head_content %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_and_signup.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/miniature_page.css') }}">
 {% endblock %}
 
 {% block main_content %}
@@ -20,6 +20,10 @@
             {% endfor %}
         </div>
         {{ form.submit(class="form__submit") }}
+    </form>
+    <form action="{{ url_for('auth.register') }}" class="logout__form">
+        <p class="logout__form-message">Don't have an account yet?</p>
+        <button type="submit" class="logout__form-button sign_up">Sign Up</button>
     </form>
 {% endblock %}
 

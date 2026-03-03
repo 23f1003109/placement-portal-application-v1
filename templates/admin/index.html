@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+    <div class="secondary-header">
+        <h1 class="secondary-header__title">Welcome, Admin!</h1>
+        <form action="{{ url_for('auth.logout') }}" class="logout__form">
+            <button type="submit" class="item__button-red">Log Out</button>
+        </form>
+    </div>
+    <article class="list_display">
+        <div class="list_display-header">
+            <h2 class="list_display-title">Registered Companies</h2>
+            <form class="list_display-form" method="POST">
+                {{ company_filter_form.hidden_tag() }}
+                {{ company_filter_form.filter_by(class="dropdown") }}
+                {{ company_filter_form.filter_query(class="search-box") }}
+                {{ company_filter_form.submit(class="item__button-blue filter-button") }}
+            </form>
+        </div>
+        <div class="scroll-wrappeer">
+            <ul class="list_display-items">
+                {% if companies %}
+                    {% for company in companies %}
+                        <li class="item list_display-item">
+                            <span class="item-name">{{ company.name }}</span>
+                            <div class="item-forms">
+                                <form action="{{ url_for('admin.view_company', company_id=company.id) }}" class="item-form">
+                                    <button type="submit" class="item__button-blue" >View Details</button>
+                                </form>
+                                <form action="{{ url_for('admin.blacklist_company', company_id=company.id) }}" class="item-form" method="POST">
+                                    {{ hide_csrf_tokens.hidden_tag() }}
+                                    {% if company.is_blacklisted %}
+                                        <button class="item__button-green" >UnBlacklist</button>
+                                    {% else %}
+                                        <button class="item__button-red" >Blacklist</button>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="empty_item list_display-item">Nothing to show here!</li>
+                {% endif %}
+            </ul>
+        </div>
+    </article>
+    <article class="list_display">
+        <div class="list_display-header">
+            <h2 class="list_display-title">Registered Students</h2>
+            <form class="list_display-form" method="POST">
+                {{ student_filter_form.hidden_tag() }}
+                {{ student_filter_form.filter_by(class="dropdown") }}
+                {{ student_filter_form.filter_query(class="search-box") }}
+                {{ student_filter_form.submit(class="item__button-blue filter-button") }}
+            </form>
+        </div>
+        <div class="scroll-wapper">
+            <ul class="list_display-items">
+                {% if students %}
+                    {% for student in students %}
+                        <li class="list_display-item">
+                            <span class="row-item">{{ student.name }}</span>
+                            <div class="item-forms">
+                                <form action="{{ url_for('admin.view_student', student_id=student.id) }}" class="item-form">
+                                    <button type="submit" class="item__button-blue" >View Details</button>
+                                </form>
+                                <form action="{{ url_for('admin.blacklist_student', student_id=student.id) }}" class="item-form" method="POST">
+                                    {{ hide_csrf_tokens.hidden_tag() }}
+                                    {% if student.is_blacklisted %}
+                                        <button class="item__button-green" >UnBlacklist</button>
+                                    {% else %}
+                                        <button class="item__button-red" >Blacklist</button>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="empty_item list_display-item">Nothing to show here!</li>
+                {% endif %}
+            </ul>
+        </div>
+    </article>
+
+    <article class="list_display">
+        <h2 class="list_display-title">Company Applications</h2>
+        <div class="scroll-wrappeer">
+            <ul class="list_display-items">
+                {% if unapproved_companies %}
+                    {% for unapproved_company in unapproved_companies %}
+                        <li class="list_display-item">
+                            <span class="row-item">{{ unapproved_company.name }}</span>
+                            <form action="{{ url_for('admin.approve_company_applications', company_id=unapproved_company.id) }}" class="item-form" method="POST">
+                                {{ hide_csrf_tokens.hidden_tag() }}
+                                <button class="item__button-green" >Approve</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="empty_item list_display-item">Nothing to show here!</li>
+                {% endif %}
+            </ul>
+        </div>
+    </article>
+    <article class="table_display">
+        <h2 class="table_display-header">Ongoing Drives</h2>
+        <div class="scroll-wrappeer">
+            <table class="table_display-items">
+                <thead class="table_display-item list_head">
+                    <tr>
+                        <th class="row-item">Serial No.</th>
+                        <th class="row-item">Drive Name</th>
+                        <th colspan="2" class="row-item">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if ongoing_drives %}
+                        {% for ongoing_drive in ongoing_drives %}
+                            <tr class="table_display-item">
+                                <td class="row-item">{{ ongoing_drive.id }}</td>
+                                <td class="row-item">{{ ongoing_drive.name }}</td>
+                                <td class="row-item">
+                                    <form action="{{ url_for('admin.view_drive', drive_id=ongoing_drive.id) }}" class="item-form">
+                                        {{ hide_csrf_tokens.hidden_tag() }}
+                                        <button type="submit" class="item__button-blue" >View Details</button>
+                                    </form>
+                                </td>
+                                <td class="row-item">
+                                    <form action="{{ url_for('admin.mark_drive_as_completed', drive_id=ongoing_drive.id) }}" class="item-form" method="POST">
+                                        {{ hide_csrf_tokens.hidden_tag() }}
+                                        <button type="submit" class="item__button-green" >Mark as complete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <li class="empty_item list_display-item">Nothing to show here!</li>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+    <article class="table_display">
+        <h2 class="table_display-title">Student Drive Applications</h2>
+        <div class="scroll-wrappeer">
+            <table class="table_display-items">
+                <thead class="table_head">
+                    <tr class="table_display-item">
+                        <th class="row-item">Serial No.</th>
+                        <th class="row-item">Student Name</th>
+                        <th class="row-item">Drive Name</th>
+                        <th class="row-item">Company Name</th>
+                        <th class="row-item">Application Date</th>
+                        <th class="row-item">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table_body">
+                    {% if student_drive_applications %}
+                        {% for student_drive_application in student_drive_applications %}
+                            <tr class="table_display-item">
+                                <td class="row-item">{{ student_drive_application.id }}</td>
+                                <td class="row-item">{{ student_drive_application.student.name }}</td>
+                                <td class="row-item">{{ student_drive_application.drive.name }}</td>
+                                <td class="row-item">{{ student_drive_application.company.name }}</td>
+                                <td class="row-item">{{ student_drive_application.application_date }}</td>
+                                <td class="row-item">
+                                    <form action="{{ url_for('admin.view_application', application_id=student_drive_application.id) }}" class="item-form">
+                                        <button type="submit" class="item__button-blue" >View Details</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                </tbody>
+                    <tbody class="empty_item list_display-item">
+                        <td colspan="6">Nothing to show here!</td>
+                    </tbody>
+                {% endif %}
+            </table>
+        </div>
+    </article>
+
+{% endblock %}
