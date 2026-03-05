@@ -17,7 +17,7 @@
                 {{ company_filter_form.submit(class="item__button-blue filter-button") }}
             </form>
         </div>
-        <div class="scroll-wrappeer">
+        <div class="scroll-wrapper">
             <ul class="list_display-items">
                 {% if companies %}
                     {% for company in companies %}
@@ -84,7 +84,7 @@
 
     <article class="list_display">
         <h2 class="list_display-title">Company Applications</h2>
-        <div class="scroll-wrappeer">
+        <div class="scroll-wrapper">
             <ul class="list_display-items">
                 {% if unapproved_companies %}
                     {% for unapproved_company in unapproved_companies %}
@@ -104,7 +104,7 @@
     </article>
     <article class="table_display">
         <h2 class="table_display-header">Ongoing Drives</h2>
-        <div class="scroll-wrappeer">
+        <div class="scroll-wrapper">
             <table class="table_display-items">
                 <thead class="table_display-item list_head">
                     <tr>
@@ -113,7 +113,7 @@
                         <th colspan="2" class="row-item">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table_body">
                     {% if ongoing_drives %}
                         {% for ongoing_drive in ongoing_drives %}
                             <tr class="table_display-item">
@@ -134,7 +134,12 @@
                             </tr>
                         {% endfor %}
                     {% else %}
-                        <li class="empty_item list_display-item">Nothing to show here!</li>
+                        <tbody class="table_body">
+                            <tr class="empty_item list_display-item">
+                                <td class="row-item">Nothing to show here!</td>
+                            </tr>
+                        </tbody>
+                        <li ></li>
                     {% endif %}
                 </tbody>
             </table>
@@ -142,7 +147,7 @@
     </article>
     <article class="table_display">
         <h2 class="table_display-title">Student Drive Applications</h2>
-        <div class="scroll-wrappeer">
+        <div class="scroll-wrapper">
             <table class="table_display-items">
                 <thead class="table_head">
                     <tr class="table_display-item">
@@ -171,10 +176,10 @@
                             </tr>
                         {% endfor %}
                     {% else %}
-                </tbody>
-                    <tbody class="empty_item list_display-item">
+                </tbody class="table_body">
+                    <tr class="empty_item list_display-item">
                         <td colspan="6">Nothing to show here!</td>
-                    </tbody>
+                    </tr>
                 {% endif %}
             </table>
         </div>

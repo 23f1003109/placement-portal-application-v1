@@ -22,7 +22,7 @@ def seed_database():
         user = User(
             username=f"student{i}",
             email=f"student{i}@test.com",
-            role=student_role
+            role_id=student_role.id
         )
         user.set_password("password")
 
@@ -44,7 +44,7 @@ def seed_database():
         user = User(
             username=f"company{i}",
             email=f"company{i}@test.com",
-            role=company_role
+            role_id=company_role.id
         )
         user.set_password("password")
 

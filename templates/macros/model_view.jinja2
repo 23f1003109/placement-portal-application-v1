@@ -12,3 +12,17 @@
 {% endfor %}
 
 {% endmacro %}
+
+
+{% macro render_listed_fields(model_instance, fields_to_show=[]) %}
+{% for key, value in model_instance.exposed_fields().items() if key in fields_to_show %}
+
+{% set field_value = model_instance[key] %}
+
+<li class="view_details-item">
+    <span class="item_title subentry">{{ value }}:</span>
+    <span class="item_value subentry">{{ field_value if field_value is not none else 'N/A' }}</span>
+</li>
+
+{% endfor %}
+{% endmacro %}

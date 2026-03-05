@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+    <div class="secondary-header">
+        <h1 class="secondary-header__title">Welcome, {{ company.name }}</h1>
+        <form action="{{ url_for('auth.logout') }}" class="logout__form">
+            <button type="submit" class="item__button-red">Log Out</button>
+        </form>
+    </div>
+    <article class="table_display">
+        <div class="table_display-header">
+            <h2 class="table_display-title">Upcoming Drives</h2>
+            {% if not company.is_approved %}
+                <button class="item__button-grey" disabled>Waiting for approval</button>
+            {% else %}
+                <a href="{{ url_for('company.create_drive') }}" class="item__button-cyan">Create Drive</a>
+            {% endif %}
+        </div>
+        <div class="scroll-wrapper">
+        <table class="table_display-items">
+            <thead class="table_head">
+                <tr class="table_display-item">
+                    <th class="row-item">Serial No.</th>
+                    <th class="row-item">Drive Name</th>
+                    <th class="row-item" colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="table_body">
+                {% for drive in upcoming_drives %}
+                <tr class="table_display-item">
+                    <td class="row-item">{{ drive.id }}</td>
+                    <td class="row-item">{{ drive.name }}</td>
+                    <td class="row-item">
+                        <a href="{{ url_for('company.view_drive', drive_id=drive.id) }}" class="item__button-blue">View Details</a>
+                    </td>
+                    <td class="row-item">
+                        <a href="{{ url_for('company.drive_completed', drive_id=drive.id) }}" class="item__button-green">Mark as completed</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </article>
+
+    <article class="table_display">
+        <div class="table_display-header">
+            <h2 class="table_display-title standalone_header">Closed Drives</h2>
+        </div>
+        <div class="scroll-wrapper">
+        <table class="table_display-items">
+            <thead class="table_head">
+                <tr class="table_display-item">
+                    <th class="row-item">Serial No.</th>
+                    <th class="row-item">Drive Name</th>
+                    <th class="row-item">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="table_body">
+                {% for drive in closed_drives %}
+                <tr class="table_display-item">
+                    <td class="row-item">{{ drive.id }}</td>
+                    <td class="row-item">{{ drive.name }}</td>
+                    <td class="row-item">
+                        <a href="{{ url_for('company.update_drive', drive_id=drive.id) }}" class="item__button-blue">Update</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </article>
+{% endblock %}

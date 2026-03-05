@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+<article>
+    <h2>List of Applications for the Drive</h2>
+    <span>Job Title: {{ drive.job_title }}</span>
+    <h3>Recieved Applications</h3>
+    <div class="scroll-wapper">
+        <ul class="list_display-items">
+            {% if drive.applications %}
+                {% for application in drive.application %}
+                    <li class="list_display-item">
+                        <span class="row-item">{{ application.student.name }}</span>
+                        <div class="item-forms">
+                            <form action="{{ url_for('company.student_application', application_id=application.id) }}" class="item-form">
+                                <button type="submit" class="item__button-blue" >Review Application</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="empty_item list_display-item">No one has applied for this drive yet!</li>
+            {% endif %}
+        </ul>
+    </div>
+    <a href="{{ url_for('company.index') }}" class="item__button-blue">Back</a>
+</article>
+{% endblock %}

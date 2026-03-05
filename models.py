@@ -1,4 +1,6 @@
 from datetime import date
+from email.policy import default
+
 from constraints import *
 from sqlalchemy import CheckConstraint
 from extensions import db, bcrypt, login_manager
@@ -104,8 +106,8 @@ class Company(db.Model):
     description = db.Column(db.Text)
     location = db.Column(db.Text)
     website = db.Column(db.Text)
-    is_approved = db.Column(db.Boolean, nullable=False, default=False)
-    is_blacklisted = db.Column(db.Boolean, nullable=False, default=False)
+    is_approved = db.Column(db.Boolean, default=False)
+    is_blacklisted = db.Column(db.Boolean, default=False)
 
     drives =db.relationship('Drive', back_populates='company', cascade='all, delete-orphan')
 
@@ -166,7 +168,8 @@ class Application(db.Model):
     drive = db.relationship('Drive', back_populates='applications')
 
     application_date = db.Column(db.Date, nullable=False, default=date.today)
-    status = db.Column(db.String(MAX_STATUS_TEXT_LENGTH), nullable=False)
+    status = db.Column(db.String(MAX_STATUS_TEXT_LENGTH), default="Applied", nullable=False)
+    remark = db.Column(db.Text,default='None')
     #ToDo: implement status as RadioField with values Shortlist, Waiting, Reject when the application company sees it
     #whereas if a student sees it they should see either applied shortlisted, waiting, rejected
     resume_link = db.Column(db.Text, nullable=False)

@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, EmailField, SelectField, TextAreaField, RadioField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, EmailField, SelectField, TextAreaField, RadioField, DateField
+from wtforms.fields.datetime import DateField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp, Optional, URL
 from wtforms import ValidationError
 from constraints import *
@@ -73,7 +74,19 @@ class UpdateCompanyProfileForm(FlaskForm):
     website = TextAreaField('Website', validators=[Optional(),URL(message='Not a valid domain! You may leave this field empty.')])
 
 class CreateDriveForm(FlaskForm):
-    pass
+    drive_name = StringField('Drive Name', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    job_title = StringField('Job Title', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    job_description = TextAreaField('Job Description', )
+    job_location = TextAreaField('Job Location')
+    eligibility_criteria = TextAreaField('Eligibility Criteria')
+    application_deadline = DateField('Application Deadline', validators=[DataRequired()])
+    salary = IntegerField('Salary', validators=[DataRequired()])
+    submit = SubmitField('Create Drive')
+
+
+class ShortlistForm(FlaskForm):
+    application_status = SelectField('Application Status',choices=[('shortlist', 'Shortlist'), ('waiting', 'Waiting'), ('reject', 'Reject')], validators=[DataRequired()])
+    save_status = SubmitField('Save Status')
 
 class CreateApplicationForm(FlaskForm):
     pass
@@ -85,3 +98,23 @@ class FilterForm(FlaskForm):
 
 class HideCSRFTokenForm(FlaskForm):
     pass
+
+class MakeCompanyProfileForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    industry = StringField('Industry', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    hr_name = StringField('HR Name', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    hr_email = EmailField('HR Email', validators=[DataRequired(), Length(max=MAX_EMAIL_LENGTH), Email()])
+    hr_contact = StringField('HR Contact', validators=[DataRequired(), Length(max=MAX_CONTACT_NUMBER_LENGTH)])
+    description = TextAreaField('Description', validators=[Optional()])
+    location = TextAreaField('Location', validators=[Optional()])
+    website = TextAreaField('Website', validators=[URL(message='Not a valid domain! You may leave this field empty.'), Optional()])
+    submit = SubmitField('Update Profile')
+
+
+class MakeStudentProfileForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(max=MAX_NAME_LENGTH)])
+    department = StringField('Department', validators=[DataRequired(), Length(max=MAX_DEPARTMENT_NAME_LENGTH)])
+    degree = StringField('Degree', validators=[DataRequired(), Length(max=MAX_DEGREE_NAME_LENGTH)])
+    contact_number = StringField('Phone Number', validators=[DataRequired(), Length(max=MAX_CONTACT_NUMBER_LENGTH)])
+    submit = SubmitField('Update Profile')
+

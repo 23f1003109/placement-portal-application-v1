@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% from "macros/model_view.jinja2" import render_fields, render_listed_fields %}
+
+
+{% block head_content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/miniature_page.css') }}">
+{% endblock %}
+
+{% block main_content %}
+<main>
+    <h1 class="view_details-header">Student Application</h1>
+    <div class="view_details">
+        <ul class="view_details-items">
+            {{ render_listed_fields(application.student, ['name', 'department']) }}
+            {{ render_listed_fields(application.drive, ['name', 'job_title']) }}
+        </ul>
+        <img src="{{ url_for('static', filename='images/student-person-part-2-svgrepo-com.svg') }}" alt="Stock Student Image" class="view_details-image">
+    </div>
+    <form>
+        {{ shortlist_form.hidden_tag() }}
+        {{ shortlist_form.application_status(class="dropdown") }}
+        {{ shortlist_form.save_status(class="form__submit") }}
+    </form>
+    <div class="view_details-buttons">
+        <a href="{{ url_for('company.view_drive', drive_id=application.drive.id) }}" class="view_details-button item__button-blue">Back</a>
+    </div>
+</main>
+{% endblock %}
