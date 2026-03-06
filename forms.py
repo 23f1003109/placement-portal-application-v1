@@ -89,7 +89,8 @@ class ShortlistForm(FlaskForm):
     save_status = SubmitField('Save Status')
 
 class CreateApplicationForm(FlaskForm):
-    pass
+    resume_link = StringField('Resume Link', validators=[DataRequired(), URL(message='Not a valid domain!')])
+    submit = SubmitField('Apply')
 
 class FilterForm(FlaskForm):
     filter_by = SelectField('Filter By', validators=[DataRequired()], default='name')

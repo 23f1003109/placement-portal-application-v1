@@ -3,9 +3,13 @@
 {% block main_content %}
     <div class="secondary-header">
         <h1 class="secondary-header__title">Welcome, {{ company.name }}</h1>
-        <form action="{{ url_for('auth.logout') }}" class="logout__form">
-            <button type="submit" class="item__button-red">Log Out</button>
-        </form>
+        <nav class="secondary-header__nav">
+            <a href="{{ url_for('company.edit_company') }}" class="item__button-blue">Edit Profile</a>
+            <form action="{{ url_for('auth.logout') }}" class="logout__form" method="POST">
+                {{ form.hidden_tag() }}
+                <button type="submit" class="item__button-red">Log Out</button>
+            </form>
+        </nav>
     </div>
     <article class="table_display">
         <div class="table_display-header">

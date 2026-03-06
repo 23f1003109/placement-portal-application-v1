@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, abort, request
 from flask_login import login_required, current_user
 from . import company_bp
 from functools import wraps
-from forms import CreateDriveForm, ShortlistForm, MakeCompanyProfileForm
+from forms import CreateDriveForm, ShortlistForm, MakeCompanyProfileForm,HideCSRFTokenForm
 from models import Drive, Application, Company
 from extensions import db
 
@@ -26,13 +26,16 @@ def index():
     company = current_user.company
     upcoming_drives = [drive for drive in company.drives if not drive.is_completed]
     closed_drives = [drive for drive in company.drives if drive.is_completed]
-    return render_template('company/index.html', company=company, upcoming_drives=upcoming_drives, closed_drives=closed_drives)
+    form = HideCSRFTokenForm()
+    return render_template('company/index.html', company=company, upcoming_drives=upcoming_drives, closed_drives=closed_drives, form=form)
 
 
 @company_bp.route('/create_company/', methods=['GET', 'POST'])
 @login_required
 @role_required('company')
 def create_company():
+    if current_user.company.is_blacklisted:
+        abort(403)
     form = MakeCompanyProfileForm()
     if form.validate_on_submit():
         kwargs = {
@@ -50,14 +53,16 @@ def create_company():
         db.session.add(company)
         db.session.commit()
         return redirect(url_for('company.index'))
-    return (render_template('company/create_company.html', form=form)
+    return render_template('company/create_company.html', form=form)
 
 
 
-@company_bp.route('/edit_company/', methods=['GET', 'POST']))
+@company_bp.route('/edit_company/', methods=['GET', 'POST'])
 @login_required
 @role_required('company')
 def edit_company():
+    if current_user.company.is_blacklisted:
+        abort(403)
     form = MakeCompanyProfileForm()
     if request.method == 'GET':
         form.name.data = current_user.company.name
@@ -79,6 +84,8 @@ def edit_company():
 @login_required
 @role_required('company')
 def create_drive():
+    if current_user.company.is_blacklisted:
+        abort(403)
     if not current_user.company.is_approved:
         return redirect(url_for('company.index'))
     form = CreateDriveForm()
@@ -105,6 +112,8 @@ def create_drive():
 @login_required
 @role_required('company')
 def view_drive(drive_id):
+    if current_user.company.is_blacklisted:
+        abort(403)
     drive = Drive.query.filter_by(company_id=current_user.company.id, id=drive_id).first_or_404()
     return render_template('company/view_drive.html', drive=drive)
 
@@ -112,6 +121,8 @@ def view_drive(drive_id):
 @login_required
 @role_required('company')
 def drive_completed(drive_id):
+    if current_user.company.is_blacklisted:
+        abort(403)
     drive = Drive.query.get_or_404(drive_id)
     drive.is_completed = True
     db.session.commit()
@@ -122,6 +133,8 @@ def drive_completed(drive_id):
 @login_required
 @role_required('company')
 def student_application(application_id):
+    if current_user.company.is_blacklisted:
+        abort(403)
     application = Application.query.join(Drive).filter(Application.id == application_id, Drive.company_id==current_user.company.id).first_or_404()
     shortlist_form = ShortlistForm()
     return render_template('company/student_application.html', application=application, shortlist_form=shortlist_form)
@@ -130,6 +143,8 @@ def student_application(application_id):
 @login_required
 @role_required('company')
 def update_drive(drive_id):
+    if current_user.company.is_blacklisted:
+        abort(403)
     drive = Drive.query.get_or_404(drive_id)
     drive.is_completed = False
     db.session.commit()

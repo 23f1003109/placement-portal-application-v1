@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block head_content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/miniature_page.css') }}">
+{% endblock %}
+
+{% block main_content %}
+    <form method="POST" class="form">
+        {{ form.hidden_tag() }}
+        <div class="form__field">
+            {{ form.resume_link.label(class="form__field-label") }} {{ form.resume_link(class="form__field-input", required=True) }}
+            {% for error in form.resume_link.errors %}
+                <div class="form__field-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {{ form.submit(class="form__submit") }}
+    </form>
+{% endblock %}
+

@@ -1,10 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block main_content %}
+    <div class="secondary-header">
+        <h1 class="secondary-header__title">Welcome, {{ student.name }}</h1>
+        <nav class="secondary-header__nav">
+            <a href="{{ url_for('student.edit_student') }}" class="item__button-blue">Edit Profile</a>
+            <a href="{{ url_for('student.view_history') }}" class="item__button-green">View History</a>
+            <form action="{{ url_for('auth.logout') }}" class="logout__form" method="POST">
+                {{ form.hidden_tag() }}
+                <button type="submit" class="item__button-red">Log Out</button>
+            </form>
+        </nav>
+    </div>
+    <article class="list_display">
+        <div class="list_display-header">
+            <h2 class="list_display-title">Organizations</h2>
+        </div>
+        <div class="scroll-wapper">
+            <ul class="list_display-items">
+                {% if companies %}
+                    {% for company in companies %}
+                        <li class="list_display-item">
+                            <span class="row-item item-name">{{ company.name }}</span>
+                            <a href="{{ url_for('student.view_company', company_id=company.id) }}" class="item__button-blue" >View Details</a>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="empty_item list_display-item">Nothing to show here!</li>
+                {% endif %}
+            </ul>
+        </div>
+    </article>
+    <article class="table_display">
+        <div class="table_display-header">
+            <h2 class="table_display-title">Applied Drives</h2>
+        </div>
+        <div class="scroll-wrapper">
+        <table class="table_display-items">
+            <thead class="table_head">
+                <tr class="table_display-item">
+                    <th class="row-item">Serial No.</th>
+                    <th class="row-item">Drive Name</th>
+                    <th class="row-item">Company</th>
+                    <th class="row-item">Date</th>
+                    <th class="row-item"></th>
+                </tr>
+            </thead>
+            <tbody class="table_body">
+                {% for application in applied_applications %}
+                <tr class="table_display-item">
+                    <td class="row-item">{{ application.drive.id }}</td>
+                    <td class="row-item">{{ application.drive.name }}</td>
+                    <td class="row-item">{{ application.drive.company.name }}</td>
+                    <td class="row-item">{{ application.application_date.strftime("%d/%m/%Y") }}</td>
+                    <td class="row-item">
+                        <a href="{{ url_for('student.view_drive', drive_id=application.drive.id) }}" class="item__button-blue">View Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </article>
+{% endblock %}

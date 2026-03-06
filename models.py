@@ -167,11 +167,9 @@ class Application(db.Model):
     drive_id = db.Column(db.Integer, db.ForeignKey('drives.id'), nullable=False)
     drive = db.relationship('Drive', back_populates='applications')
 
-    application_date = db.Column(db.Date, nullable=False, default=date.today)
-    status = db.Column(db.String(MAX_STATUS_TEXT_LENGTH), default="Applied", nullable=False)
+    application_date = db.Column(db.Date, default=date.today)
+    status = db.Column(db.String(MAX_STATUS_TEXT_LENGTH), default="applied")
     remark = db.Column(db.Text,default='None')
-    #ToDo: implement status as RadioField with values Shortlist, Waiting, Reject when the application company sees it
-    #whereas if a student sees it they should see either applied shortlisted, waiting, rejected
     resume_link = db.Column(db.Text, nullable=False)
 
     __table_args__ = (

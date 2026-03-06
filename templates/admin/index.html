@@ -3,7 +3,8 @@
 {% block main_content %}
     <div class="secondary-header">
         <h1 class="secondary-header__title">Welcome, Admin!</h1>
-        <form action="{{ url_for('auth.logout') }}" class="logout__form">
+        <form action="{{ url_for('auth.logout') }}" class="logout__form" method="POST">
+            {{ hide_csrf_tokens.hidden_tag() }}
             <button type="submit" class="item__button-red">Log Out</button>
         </form>
     </div>
@@ -176,11 +177,11 @@
                             </tr>
                         {% endfor %}
                     {% else %}
-                </tbody class="table_body">
-                    <tr class="empty_item list_display-item">
-                        <td colspan="6">Nothing to show here!</td>
-                    </tr>
-                {% endif %}
+                        <tr class="empty_item list_display-item">
+                            <td colspan="6">Nothing to show here!</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
             </table>
         </div>
     </article>

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+<div class="secondary-header">
+    <h1 class="secondary-header__title">{{ company.name }}</h1>
+    <nav class="secondary-header__nav">
+        <a href="{{ url_for('student.view_history') }}" class="item__button-green">View History</a>
+        <a href="{{ url_for('student.index') }}" class="item__button-blue">Back</a>
+        <form action="{{ url_for('auth.logout') }}" class="logout__form" method="POST">
+            {{ form.hidden_tag() }}
+            <button type="submit" class="item__button-red">Log Out</button>
+        </form>
+    </nav>
+</div>
+<article class="list_display">
+    <div class="list_display-header">
+        <h2 class="list_display-title">Overview</h2>
+    </div>
+    <p class="list_display-description">{{ company.description }}</p>
+    <div class="list_display-header">
+        <h2 class="list_display-title">Current Drives</h2>
+    </div>
+    <div class="scroll-wapper">
+        <ul class="list_display-items">
+            {% if company.drives %}
+                {% for drive in company.drives %}
+                    <li class="list_display-item">
+                        <span class="row-item">{{ drive.name }}</span>
+                        <a href="{{ url_for('student.view_drive', drive_id=drive.id) }}" class="row-item item__button-blue" >View Details</a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="empty_item list_display-item">Nothing to show here!</li>
+            {% endif %}
+        </ul>
+    </div>
+</article>
+{% endblock %}

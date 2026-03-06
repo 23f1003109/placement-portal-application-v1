@@ -81,6 +81,13 @@ a{
     border-top: none;
 }
 
+.secondary-header__nav {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: row;
+}
+
 .list_display {
     border: 3px solid black;
     border-top: none;
@@ -163,7 +170,12 @@ a{
     justify-content: space-around;
     border: 3px solid #899199;
     width: 93%;
-    align-items: center;
+    align-content: center;
+    align-items: baseline;
+}
+
+.list_display-description {
+    font-size: large;
 }
 
 .table_display-item {
@@ -195,7 +207,7 @@ a{
     background-color: #def5e3;
     font-weight: 600;
     color: #64b874;
-    margin: 6px auto;
+    margin: 6px;
     cursor: pointer;
 }
 
@@ -208,7 +220,7 @@ a{
     background-color: #ffc9c9;
     font-weight: 600;
     color: #e23d3d;
-    margin: 6px auto;
+    margin: 6px;
     cursor: pointer;
 }
 
@@ -221,7 +233,7 @@ a{
     background-color: #e7f5ff;
     font-weight: 600;
     color: #2a7cc7;
-    margin: 6px auto;
+    margin: 6px;
     cursor: pointer;
 }
 

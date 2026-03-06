@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block head_content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/miniature_page.css') }}">
+{% endblock %}
+
+{% block main_content %}
+<form method="POST" class="form">
+    <h1 class="form__header">Create Company Profile</h1>
+    {{ form.hidden_tag() }}
+    {% for field in form if field.type != "HiddenField" and field.type != "CSRFTokenField" and field.type != "SubmitField" %}
+        <div class="form__field">
+            {{ field.label(class="form__field-label") }}
+            {{ field(class="form__field-input") }}
+            {% for error in field.errors %}
+                <div class="form__field-error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    {{ form.submit(class='item__button-cyan') }}
+</form>
+{% endblock %}

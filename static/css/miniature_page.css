@@ -264,4 +264,6 @@ main {
 
 .view_details-item {
     list-style: none;
+    margin: 6px;
 }
+
