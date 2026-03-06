@@ -34,8 +34,6 @@ def index():
 @login_required
 @role_required('student')
 def create_student():
-    if current_user.student.is_blacklisted:
-        abort(403)
     form = MakeStudentProfileForm()
     if form.validate_on_submit():
         kwargs = {

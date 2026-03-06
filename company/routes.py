@@ -34,8 +34,6 @@ def index():
 @login_required
 @role_required('company')
 def create_company():
-    if current_user.company.is_blacklisted:
-        abort(403)
     form = MakeCompanyProfileForm()
     if form.validate_on_submit():
         kwargs = {
