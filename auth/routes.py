@@ -6,6 +6,8 @@ from flask_login import login_user, current_user, login_required, logout_user
 from forms import LoginForm, RegistrationForm, ResetPasswordForm, ChangePasswordForm
 from . import auth_bp
 
+
+
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:

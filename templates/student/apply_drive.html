@@ -6,6 +6,7 @@
 
 {% block main_content %}
     <form method="POST" class="form">
+        <h1 class="view_details-header">Apply for {{ drive.name }}</h1>
         {{ form.hidden_tag() }}
         <div class="form__field">
             {{ form.resume_link.label(class="form__field-label") }} {{ form.resume_link(class="form__field-input", required=True) }}
@@ -16,4 +17,3 @@
         {{ form.submit(class="form__submit") }}
     </form>
 {% endblock %}
-

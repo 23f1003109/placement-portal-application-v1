@@ -11,8 +11,43 @@
         <ul class="view_details-items">
             {{ render_fields(company) }}
         </ul>
-        <img src="{{ url_for('static', filename='images/company-svgrepo-com.svg') }}" alt="Stock Student Image" class="view_details-image">
+        <img src="{{ url_for('static', filename='images/company-svgrepo-com.svg') }}" alt="Stock Company Image" class="view_details-image">
     </div>
+    <article class="table_display">
+        <div class="table_display-header">
+            <h2 class="table_display-title">Placement Drives</h2>
+        </div>
+        <div class="scroll-wrapper">
+            <table class="table_display-items">
+                <thead class="table_head">
+                    <tr class="table_display-item">
+                        <th class="row-item">Drive</th>
+                        <th class="row-item">Deadline</th>
+                        <th class="row-item">Applications</th>
+                        <th class="row-item">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="table_body">
+                    {% if company.drives %}
+                        {% for drive in company.drives %}
+                            <tr class="table_display-item">
+                                <td class="row-item">{{ drive.name }}</td>
+                                <td class="row-item">{{ drive.application_deadline.strftime('%d/%m/%Y') }}</td>
+                                <td class="row-item">{{ drive.applications|length }}</td>
+                                <td class="row-item">
+                                    <a href="{{ url_for('admin.view_drive', drive_id=drive.id) }}" class="item__button-blue">View Drive</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="empty_item list_display-item">
+                            <td colspan="4">No placement drives found for this company.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </article>
     <div class="view_details-buttons">
         <a href="{{ url_for('admin.index') }}" class="view_details-button item__button-blue">Back</a>
     </div>

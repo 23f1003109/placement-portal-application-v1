@@ -11,15 +11,47 @@
     <div class="view_details">
         <ul class="view_details-items">
             {{ render_fields(drive, ['salary']) }}
-            <li class="view_details-item">
-                <span class="subentry">Company:</span>
-                <span class="subentry">{{ drive.company.name }}</span>
-            </li>
-            <li class="view_details-item">Salary: {{ drive.salary }}</li>
-            <li class="view_details-item">Location: {{ drive.company.location }}</li>
+            <li class="view_details-item"><span class="subentry">Company:</span> <span class="subentry">{{ drive.company.name }}</span></li>
+            <li class="view_details-item"><span class="subentry">Salary:</span> <span class="subentry">{{ drive.salary }}</span></li>
+            <li class="view_details-item"><span class="subentry">Location:</span> <span class="subentry">{{ drive.company.location }}</span></li>
         </ul>
         <img src="{{ url_for('static', filename='images/company-svgrepo-com.svg') }}" alt="Stock Company Image" class="view_details-image">
     </div>
+    <article class="table_display">
+        <div class="table_display-header">
+            <h2 class="table_display-title">Applications</h2>
+        </div>
+        <div class="scroll-wrapper">
+            <table class="table_display-items">
+                <thead class="table_head">
+                    <tr class="table_display-item">
+                        <th class="row-item">Student</th>
+                        <th class="row-item">Applied On</th>
+                        <th class="row-item">Status</th>
+                        <th class="row-item">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="table_body">
+                    {% if drive.applications %}
+                        {% for application in drive.applications %}
+                            <tr class="table_display-item">
+                                <td class="row-item">{{ application.student.name }}</td>
+                                <td class="row-item">{{ application.application_date.strftime('%d/%m/%Y') }}</td>
+                                <td class="row-item">{{ application.status|title }}</td>
+                                <td class="row-item">
+                                    <a href="{{ url_for('admin.view_application', application_id=application.id) }}" class="item__button-blue">View Application</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="empty_item list_display-item">
+                            <td colspan="4">No applications have been submitted for this drive.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </article>
     <div class="view_details-buttons">
         <a href="{{ url_for('admin.index') }}" class="view_details-button item__button-blue">Back</a>
     </div>

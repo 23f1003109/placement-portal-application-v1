@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% from "macros/model_view.jinja2" import render_fields %}
 
 {% block head_content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/miniature_page.css') }}">
@@ -10,18 +9,29 @@
     <h1 class="view_details-header">Drive Details</h1>
     <div class="view_details">
         <ul class="view_details-items">
-            {{ render_fields(drive, ['salary']) }}
-            <li class="view_details-item">
-                <span class="subentry">Company:</span>
-                <span class="subentry">{{ drive.company.name }}</span>
-            </li>
-            <li class="view_details-item">Salary: {{ drive.salary }}</li>
-            <li class="view_details-item">Location: {{ drive.company.location }}</li>
+            <li class="view_details-item"><span class="subentry">Drive:</span> <span class="subentry">{{ drive.name }}</span></li>
+            <li class="view_details-item"><span class="subentry">Job Title:</span> <span class="subentry">{{ drive.job_title }}</span></li>
+            <li class="view_details-item"><span class="subentry">Company:</span> <span class="subentry">{{ drive.company.name }}</span></li>
+            <li class="view_details-item"><span class="subentry">Location:</span> <span class="subentry">{{ drive.job_location or drive.company.location or 'N/A' }}</span></li>
+            <li class="view_details-item"><span class="subentry">Deadline:</span> <span class="subentry">{{ drive.application_deadline.strftime('%d/%m/%Y') }}</span></li>
+            <li class="view_details-item"><span class="subentry">Salary:</span> <span class="subentry">{{ drive.salary }}</span></li>
+            <li class="view_details-item"><span class="subentry">Eligibility:</span> <span class="subentry">{{ drive.eligibility_criteria or 'Not specified' }}</span></li>
+            <li class="view_details-item"><span class="subentry">Description:</span> <span class="subentry">{{ drive.job_description or 'Not provided' }}</span></li>
+            {% if existing_application %}
+                <li class="view_details-item"><span class="subentry">Your Status:</span> <span class="subentry">{{ existing_application.status|title }}</span></li>
+                <li class="view_details-item"><span class="subentry">Latest Remark:</span> <span class="subentry">{{ existing_application.remark }}</span></li>
+            {% endif %}
         </ul>
         <img src="{{ url_for('static', filename='images/company-svgrepo-com.svg') }}" alt="Stock Company Image" class="view_details-image">
     </div>
     <div class="view_details-buttons">
-        <a href="{{ url_for('student.apply_drive', drive_id=drive.id) }}" class="item__button-green">Apply</a>
+        {% if existing_application %}
+            <a href="{{ url_for('student.view_history') }}" class="item__button-green">View Application</a>
+        {% elif drive.is_open %}
+            <a href="{{ url_for('student.apply_drive', drive_id=drive.id) }}" class="item__button-green">Apply</a>
+        {% else %}
+            <button class="item__button-grey" disabled>Applications Closed</button>
+        {% endif %}
         <a href="{{ url_for('student.index') }}" class="view_details-button item__button-blue">Back</a>
     </div>
 </main>

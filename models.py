@@ -1,29 +1,30 @@
 from datetime import date
-from email.policy import default
 
 from constraints import *
 from sqlalchemy import CheckConstraint
 from extensions import db, bcrypt, login_manager
 from flask_login import UserMixin
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, user_id)
 
+
 class Role(db.Model):
-    __tablename__ = "roles"
+    __tablename__ = 'roles'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(MAX_ROLE_LENGTH), unique=True)
 
 
 class User(db.Model, UserMixin):
-    __tablename__ = "users"
+    __tablename__ = 'users'
     __exposed_fields__ = {
-        "id": "ID",
-        "role_id": "Role Id",
-        "username": "Username",
-        "email": "Email"
+        'id': 'ID',
+        'role_id': 'Role Id',
+        'username': 'Username',
+        'email': 'Email',
     }
 
     id = db.Column(db.Integer, primary_key=True)
@@ -47,14 +48,15 @@ class User(db.Model, UserMixin):
     def check_password(self, raw_password):
         return bcrypt.check_password_hash(self.hashed_password, raw_password)
 
+
 class Student(db.Model):
-    __tablename__ = "students"
+    __tablename__ = 'students'
     __exposed_fields__ = {
-        "id": "ID",
-        "name": "Name",
-        "department": "Department",
-        "degree": "Degree",
-        "contact_number": "Contact Number"
+        'id': 'ID',
+        'name': 'Name',
+        'department': 'Department',
+        'degree': 'Degree',
+        'contact_number': 'Contact Number',
     }
 
     id = db.Column(db.Integer, primary_key=True)
@@ -75,20 +77,19 @@ class Student(db.Model):
         return cls.__exposed_fields__
 
 
-
 class Company(db.Model):
-    __tablename__ ="companies"
+    __tablename__ = 'companies'
     __exposed_fields__ = {
-        "id": "ID",
-        "name": "Name",
-        "industry": "Industry",
-        "user_id": "User ID",
-        "hr_name": "H.R. Name",
-        "hr_email": "H.R. Email",
-        "hr_contact": "H.R. Contact",
-        "description": "Description",
-        "location": "Location",
-        "website": "Website"
+        'id': 'ID',
+        'name': 'Name',
+        'industry': 'Industry',
+        'user_id': 'User ID',
+        'hr_name': 'H.R. Name',
+        'hr_email': 'H.R. Email',
+        'hr_contact': 'H.R. Contact',
+        'description': 'Description',
+        'location': 'Location',
+        'website': 'Website',
     }
 
     id = db.Column(db.Integer, primary_key=True)
@@ -109,25 +110,25 @@ class Company(db.Model):
     is_approved = db.Column(db.Boolean, default=False)
     is_blacklisted = db.Column(db.Boolean, default=False)
 
-    drives =db.relationship('Drive', back_populates='company', cascade='all, delete-orphan')
+    drives = db.relationship('Drive', back_populates='company', cascade='all, delete-orphan')
 
     @classmethod
     def exposed_fields(cls):
         return cls.__exposed_fields__
-    
+
 
 class Drive(db.Model):
-    __tablename__ = "drives"
+    __tablename__ = 'drives'
     __exposed_fields__ = {
-        "id": "ID",
-        "company_id": "Company ID",
-        "name": "Name",
-        "job_title": "Job Title",
-        "job_description": "Job Description",
-        "job_location": "Job Location",
-        "eligibility_criteria": "Eligibility Criteria",
-        "application_deadline": "Application Deadline",
-        "salary": "Salary"
+        'id': 'ID',
+        'company_id': 'Company ID',
+        'name': 'Name',
+        'job_title': 'Job Title',
+        'job_description': 'Job Description',
+        'job_location': 'Job Location',
+        'eligibility_criteria': 'Eligibility Criteria',
+        'application_deadline': 'Application Deadline',
+        'salary': 'Salary',
     }
 
     id = db.Column(db.Integer, primary_key=True)
@@ -145,21 +146,26 @@ class Drive(db.Model):
     company = db.relationship('Company', back_populates='drives')
     applications = db.relationship('Application', back_populates='drive', cascade='all, delete-orphan')
 
+    @property
+    def is_open(self):
+        return self.company.is_approved and not self.is_completed and self.application_deadline >= date.today()
+
     @classmethod
     def exposed_fields(cls):
         return cls.__exposed_fields__
 
 
 class Application(db.Model):
-    __tablename__ = "applications"
+    __tablename__ = 'applications'
     __exposed_fields__ = {
-        "id": "ID",
-        "student_id": "Student ID",
-        "drive_id": "Drive ID",
-        "application_date": "Application Date",
-        "status": "Status",
-        "resume_link": "Resume Link"
+        'id': 'ID',
+        'student_id': 'Student ID',
+        'drive_id': 'Drive ID',
+        'application_date': 'Application Date',
+        'status': 'Status',
+        'resume_link': 'Resume Link',
     }
+
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     student = db.relationship('Student', back_populates='applications')
@@ -168,13 +174,16 @@ class Application(db.Model):
     drive = db.relationship('Drive', back_populates='applications')
 
     application_date = db.Column(db.Date, default=date.today)
-    status = db.Column(db.String(MAX_STATUS_TEXT_LENGTH), default="applied")
-    remark = db.Column(db.Text,default='None')
+    status = db.Column(db.String(MAX_STATUS_TEXT_LENGTH), default='applied')
+    remark = db.Column(db.Text, default='Pending review')
     resume_link = db.Column(db.Text, nullable=False)
 
     __table_args__ = (
         db.UniqueConstraint('student_id', 'drive_id', name='unique_application'),
-        CheckConstraint('status IN ("applied", "shortlisted", "selected", "rejected")', name="check_valid_status"),
+        CheckConstraint(
+            'status IN ("applied", "shortlisted", "interview", "rejected", "placed")',
+            name='check_valid_status',
+        ),
     )
 
     @property

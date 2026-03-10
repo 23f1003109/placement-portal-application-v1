@@ -16,21 +16,21 @@
     <div class="list_display-header">
         <h2 class="list_display-title">Overview</h2>
     </div>
-    <p class="list_display-description">{{ company.description }}</p>
+    <p class="list_display-description">{{ company.description or 'No company overview available.' }}</p>
     <div class="list_display-header">
-        <h2 class="list_display-title">Current Drives</h2>
+        <h2 class="list_display-title">Open Placement Drives</h2>
     </div>
     <div class="scroll-wapper">
         <ul class="list_display-items">
-            {% if company.drives %}
-                {% for drive in company.drives %}
+            {% if open_drives %}
+                {% for drive in open_drives %}
                     <li class="list_display-item">
                         <span class="row-item">{{ drive.name }}</span>
-                        <a href="{{ url_for('student.view_drive', drive_id=drive.id) }}" class="row-item item__button-blue" >View Details</a>
+                        <a href="{{ url_for('student.view_drive', drive_id=drive.id) }}" class="row-item item__button-blue">View Details</a>
                     </li>
                 {% endfor %}
             {% else %}
-                <li class="empty_item list_display-item">Nothing to show here!</li>
+                <li class="empty_item list_display-item">No approved placement drives are open for applications right now.</li>
             {% endif %}
         </ul>
     </div>

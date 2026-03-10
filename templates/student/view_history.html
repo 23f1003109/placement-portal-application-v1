@@ -5,38 +5,49 @@
         <h1 class="secondary-header__title">Student Application History</h1>
         <nav class="secondary-header__nav">
             <a href="{{ url_for('student.index') }}" class="item__button-blue">Back</a>
-            <form action="{{ url_for('auth.logout') }}" class="logout__form">
+            <form action="{{ url_for('auth.logout') }}" class="logout__form" method="POST">
+                {{ form.hidden_tag() }}
                 <button type="submit" class="item__button-red">Log Out</button>
             </form>
         </nav>
     </div>
     <article class="table_display">
         <div class="table_display-header">
-            <h2 class="table_display-title">Applied Drives</h2>
+            <h2 class="table_display-title">All Applications</h2>
         </div>
         <div class="scroll-wrapper">
-        <table class="table_display-items">
-            <thead class="table_head">
-                <tr class="table_display-item">
-                    <th class="row-item">Drive No.</th>
-                    <th class="row-item">Interview</th>
-                    <th class="row-item">Job Title</th>
-                    <th class="row-item">Results</th>
-                    <th class="row-item">Remark</th>
-                </tr>
-            </thead>
-            <tbody class="table_body">
-                {% for application in application_history %}
-                <tr class="table_display-item">
-                    <td class="row-item">{{ application.drive.id }}</td>
-                    <td class="row-item">In-person</td>
-                    <td class="row-item">{{ application.drive.job_title }}</td>
-                    <td class="row-item">{{ application.status }}</td>
-                    <td class="row-item">{{ application.remark }}</td>                       
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <table class="table_display-items">
+                <thead class="table_head">
+                    <tr class="table_display-item">
+                        <th class="row-item">Drive</th>
+                        <th class="row-item">Company</th>
+                        <th class="row-item">Applied On</th>
+                        <th class="row-item">Status</th>
+                        <th class="row-item">Remark</th>
+                        <th class="row-item">Resume</th>
+                    </tr>
+                </thead>
+                <tbody class="table_body">
+                    {% if application_history %}
+                        {% for application in application_history %}
+                            <tr class="table_display-item">
+                                <td class="row-item">{{ application.drive.name }}</td>
+                                <td class="row-item">{{ application.drive.company.name }}</td>
+                                <td class="row-item">{{ application.application_date.strftime('%d/%m/%Y') }}</td>
+                                <td class="row-item">{{ application.status|title }}</td>
+                                <td class="row-item">{{ application.remark }}</td>
+                                <td class="row-item">
+                                    <a href="{{ application.resume_link }}" class="item__button-blue" target="_blank" rel="noopener noreferrer">Resume</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="empty_item list_display-item">
+                            <td colspan="6">You have not submitted any applications yet.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
     </article>
 {% endblock %}

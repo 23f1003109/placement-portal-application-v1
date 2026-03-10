@@ -1,28 +1,43 @@
 {% extends 'base.html' %}
 
 {% block main_content %}
-<article>
-    <h2>List of Applications for the Drive</h2>
-    <span>Job Title: {{ drive.job_title }}</span>
-    <h3>Recieved Applications</h3>
-    <div class="scroll-wapper">
-        <ul class="list_display-items">
-            {% if drive.applications %}
-                {% for application in drive.application %}
-                    <li class="list_display-item">
-                        <span class="row-item">{{ application.student.name }}</span>
-                        <div class="item-forms">
-                            <form action="{{ url_for('company.student_application', application_id=application.id) }}" class="item-form">
-                                <button type="submit" class="item__button-blue" >Review Application</button>
-                            </form>
-                        </div>
-                    </li>
-                {% endfor %}
-            {% else %}
-                <li class="empty_item list_display-item">No one has applied for this drive yet!</li>
-            {% endif %}
-        </ul>
+<article class="table_display">
+    <div class="table_display-header">
+        <h2 class="table_display-title">Applications for {{ drive.name }}</h2>
+        <a href="{{ url_for('company.index') }}" class="item__button-blue">Back</a>
     </div>
-    <a href="{{ url_for('company.index') }}" class="item__button-blue">Back</a>
+    <p class="list_display-description">Job Title: {{ drive.job_title }}</p>
+    <div class="scroll-wrapper">
+        <table class="table_display-items">
+            <thead class="table_head">
+                <tr class="table_display-item">
+                    <th class="row-item">Student</th>
+                    <th class="row-item">Department</th>
+                    <th class="row-item">Applied On</th>
+                    <th class="row-item">Status</th>
+                    <th class="row-item">Action</th>
+                </tr>
+            </thead>
+            <tbody class="table_body">
+                {% if drive.applications %}
+                    {% for application in drive.applications %}
+                        <tr class="table_display-item">
+                            <td class="row-item">{{ application.student.name }}</td>
+                            <td class="row-item">{{ application.student.department }}</td>
+                            <td class="row-item">{{ application.application_date.strftime('%d/%m/%Y') }}</td>
+                            <td class="row-item">{{ application.status|title }}</td>
+                            <td class="row-item">
+                                <a href="{{ url_for('company.student_application', application_id=application.id) }}" class="item__button-blue">Review Application</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr class="empty_item list_display-item">
+                        <td colspan="5">No one has applied for this drive yet.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </article>
 {% endblock %}

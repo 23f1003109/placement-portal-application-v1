@@ -14,7 +14,7 @@
     </div>
     <article class="list_display">
         <div class="list_display-header">
-            <h2 class="list_display-title">Organizations</h2>
+            <h2 class="list_display-title">Approved Companies</h2>
         </div>
         <div class="scroll-wapper">
             <ul class="list_display-items">
@@ -22,44 +22,50 @@
                     {% for company in companies %}
                         <li class="list_display-item">
                             <span class="row-item item-name">{{ company.name }}</span>
-                            <a href="{{ url_for('student.view_company', company_id=company.id) }}" class="item__button-blue" >View Details</a>
+                            <a href="{{ url_for('student.view_company', company_id=company.id) }}" class="item__button-blue">View Details</a>
                         </li>
                     {% endfor %}
                 {% else %}
-                    <li class="empty_item list_display-item">Nothing to show here!</li>
+                    <li class="empty_item list_display-item">No approved companies are available right now.</li>
                 {% endif %}
             </ul>
         </div>
     </article>
     <article class="table_display">
         <div class="table_display-header">
-            <h2 class="table_display-title">Applied Drives</h2>
+            <h2 class="table_display-title">Application History</h2>
         </div>
         <div class="scroll-wrapper">
-        <table class="table_display-items">
-            <thead class="table_head">
-                <tr class="table_display-item">
-                    <th class="row-item">Serial No.</th>
-                    <th class="row-item">Drive Name</th>
-                    <th class="row-item">Company</th>
-                    <th class="row-item">Date</th>
-                    <th class="row-item"></th>
-                </tr>
-            </thead>
-            <tbody class="table_body">
-                {% for application in applied_applications %}
-                <tr class="table_display-item">
-                    <td class="row-item">{{ application.drive.id }}</td>
-                    <td class="row-item">{{ application.drive.name }}</td>
-                    <td class="row-item">{{ application.drive.company.name }}</td>
-                    <td class="row-item">{{ application.application_date.strftime("%d/%m/%Y") }}</td>
-                    <td class="row-item">
-                        <a href="{{ url_for('student.view_drive', drive_id=application.drive.id) }}" class="item__button-blue">View Details</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <table class="table_display-items">
+                <thead class="table_head">
+                    <tr class="table_display-item">
+                        <th class="row-item">Drive</th>
+                        <th class="row-item">Company</th>
+                        <th class="row-item">Applied On</th>
+                        <th class="row-item">Status</th>
+                        <th class="row-item">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="table_body">
+                    {% if recent_applications %}
+                        {% for application in recent_applications %}
+                            <tr class="table_display-item">
+                                <td class="row-item">{{ application.drive.name }}</td>
+                                <td class="row-item">{{ application.drive.company.name }}</td>
+                                <td class="row-item">{{ application.application_date.strftime('%d/%m/%Y') }}</td>
+                                <td class="row-item">{{ application.status|title }}</td>
+                                <td class="row-item">
+                                    <a href="{{ url_for('student.view_drive', drive_id=application.drive.id) }}" class="item__button-blue">View Drive</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="empty_item list_display-item">
+                            <td colspan="5">You have not applied to any drives yet.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
     </article>
 {% endblock %}

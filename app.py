@@ -1,11 +1,9 @@
-from constraints import *
-from flask import Flask, render_template, url_for, redirect, request
+from sqlalchemy import text
+from flask import Flask
+
 from config import Config
 from extensions import db, login_manager, bcrypt, csrf
 from models import User, Role
-# from forms import (ResetPasswordForm, LoginForm, RegistrationForm, ChangePasswordForm,
-#     UpdateCompanyProfileForm, UpdateStudentProfileForm, CreateDriveForm,
-#     CreateApplicationForm)
 
 
 def create_app():
@@ -32,8 +30,10 @@ def create_app():
     with app.app_context():
         db.create_all()
         seed_roles_and_admin()
+        migrate_application_status_schema()
 
     return app
+
 
 def seed_roles_and_admin():
     for role_name in ['admin', 'company', 'student']:
@@ -55,3 +55,59 @@ def seed_roles_and_admin():
 
         db.session.add(admin)
         db.session.commit()
+
+
+def migrate_application_status_schema():
+    row = db.session.execute(
+        text("SELECT sql FROM sqlite_master WHERE type='table' AND name='applications'")
+    ).scalar()
+
+    if not row or 'selected' not in row:
+        return
+
+    with db.engine.begin() as connection:
+        connection.execute(text('PRAGMA foreign_keys=OFF'))
+        connection.execute(text(
+            '''
+            CREATE TABLE applications_new (
+                id INTEGER NOT NULL,
+                student_id INTEGER NOT NULL,
+                drive_id INTEGER NOT NULL,
+                application_date DATE,
+                status VARCHAR(20),
+                remark TEXT,
+                resume_link TEXT NOT NULL,
+                PRIMARY KEY (id),
+                CONSTRAINT unique_application UNIQUE (student_id, drive_id),
+                CONSTRAINT check_valid_status CHECK (
+                    status IN ("applied", "shortlisted", "interview", "rejected", "placed")
+                ),
+                FOREIGN KEY(student_id) REFERENCES students (id),
+                FOREIGN KEY(drive_id) REFERENCES drives (id)
+            )
+            '''
+        ))
+        connection.execute(text(
+            '''
+            INSERT INTO applications_new (id, student_id, drive_id, application_date, status, remark, resume_link)
+            SELECT
+                id,
+                student_id,
+                drive_id,
+                application_date,
+                CASE
+                    WHEN status = 'selected' THEN 'placed'
+                    WHEN status IS NULL OR status = '' THEN 'applied'
+                    ELSE status
+                END,
+                CASE
+                    WHEN remark IS NULL OR remark = '' OR remark = 'None' THEN 'Pending review'
+                    ELSE remark
+                END,
+                resume_link
+            FROM applications
+            '''
+        ))
+        connection.execute(text('DROP TABLE applications'))
+        connection.execute(text('ALTER TABLE applications_new RENAME TO applications'))
+        connection.execute(text('PRAGMA foreign_keys=ON'))

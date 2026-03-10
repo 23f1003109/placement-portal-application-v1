@@ -1,28 +1,44 @@
 {% extends 'base.html' %}
-{% from "macros/model_view.jinja2" import render_fields, render_listed_fields %}
-
+{% from "macros/model_view.jinja2" import render_listed_fields %}
 
 {% block head_content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/miniature_page.css') }}">
 {% endblock %}
 
 {% block main_content %}
-<main>
+<div class="mini-container">
     <h1 class="view_details-header">Student Application</h1>
     <div class="view_details">
         <ul class="view_details-items">
-            {{ render_listed_fields(application.student, ['name', 'department']) }}
-            {{ render_listed_fields(application.drive, ['name', 'job_title']) }}
+            {{ render_listed_fields(application.student, ['name', 'department', 'degree', 'contact_number']) }}
+            {{ render_listed_fields(application.drive, ['name', 'job_title', 'application_deadline']) }}
+            <li class="view_details-item"><span class="item_title subentry">Current Status:</span> <span class="item_value subentry">{{ application.status|title }}</span></li>
+            <li class="view_details-item"><span class="item_title subentry">Resume Link:</span> <span class="item_value subentry">{{ application.resume_link }}</span></li>
         </ul>
         <img src="{{ url_for('static', filename='images/student-person-part-2-svgrepo-com.svg') }}" alt="Stock Student Image" class="view_details-image">
     </div>
-    <form>
-        {{ shortlist_form.hidden_tag() }}
+</div>
+<form method="POST" class="form">
+    {{ shortlist_form.hidden_tag() }}
+    <div class="form__field">
+        {{ shortlist_form.application_status.label(class="form__field-label") }}
         {{ shortlist_form.application_status(class="dropdown") }}
-        {{ shortlist_form.save_status(class="form__submit") }}
-    </form>
-    <div class="view_details-buttons">
-        <a href="{{ url_for('company.view_drive', drive_id=application.drive.id) }}" class="view_details-button item__button-blue">Back</a>
+        {% for error in shortlist_form.application_status.errors %}
+            <div class="form__field-error">{{ error }}</div>
+        {% endfor %}
     </div>
-</main>
+    <div class="form__field">
+        {{ shortlist_form.remark.label(class="form__field-label") }}
+        {{ shortlist_form.remark(class="form__field-input") }}
+        {% for error in shortlist_form.remark.errors %}
+            <div class="form__field-error">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {{ shortlist_form.save_status(class="form__submit") }}
+</form>
+<div class="view_details-buttons mini-buttons">
+    <a href="{{ application.resume_link }}" class="view_details-button item__button-green" target="_blank" rel="noopener noreferrer">View Resume</a>
+    <a href="{{ url_for('company.view_student', student_id=application.student.id) }}" class="view_details-button item__button-blue">Student Profile</a>
+    <a href="{{ url_for('company.view_drive', drive_id=application.drive.id) }}" class="view_details-button item__button-blue">Back</a>
+</div>
 {% endblock %}
